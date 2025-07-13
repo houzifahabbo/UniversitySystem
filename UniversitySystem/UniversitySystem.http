@@ -1,0 +1,6 @@
+@UniversitySystem_HostAddress = http://localhost:5253
+
+GET {{UniversitySystem_HostAddress}}/api/students
+Accept: application/json
+
+###
