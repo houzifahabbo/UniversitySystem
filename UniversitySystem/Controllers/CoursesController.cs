@@ -11,13 +11,13 @@ namespace University.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ApiExceptionFilter))]
-    public class StudentsController : ControllerBase
+    public class CoursesController : ControllerBase
     {
-        private readonly IStudentService _studentService;
+        private readonly ICourseService _courseService;
 
-        public StudentsController(IStudentService studentService)
+        public CoursesController(ICourseService courseService)
         {
-            _studentService = studentService;
+            _courseService = courseService;
         }
 
         [HttpGet("{id}")]
@@ -26,16 +26,16 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ApiResponse GetById(int id)
         {
-            var dto = _studentService.GetById(id);
+            var dto = _courseService.GetById(id);
             return new ApiResponse(dto);
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(List<StudentDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<CourseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ApiResponse GetAll()
         {
-            var dto = _studentService.GetAll();
+            var dto = _courseService.GetAll();
             return new ApiResponse(dto);
         }
 
@@ -43,9 +43,9 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ApiResponse Create([FromBody] AddStudentForm form)
+        public ApiResponse Create([FromBody] AddCourseForm form)
         {
-            _studentService.Create(form);
+            _courseService.Create(form);
             return new ApiResponse(HttpStatusCode.Created);
 
         }
@@ -55,9 +55,9 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ApiResponse Update(int id, [FromBody] UpdateStudentForm form)
+        public ApiResponse Update(int id, [FromBody] UpdateCourseForm form)
         {
-            _studentService.Update(id, form);
+            _courseService.Update(id, form);
             return new ApiResponse(HttpStatusCode.OK);
         }
 
@@ -67,11 +67,8 @@ namespace University.API.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ApiResponse Delete(int id)
         {
-            _studentService.Delete(id);
+            _courseService.Delete(id);
             return new ApiResponse(HttpStatusCode.OK);
         }
-
-
-
     }
 }

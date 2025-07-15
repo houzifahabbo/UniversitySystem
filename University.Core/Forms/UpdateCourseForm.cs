@@ -2,13 +2,12 @@
 
 namespace University.Core.Forms
 {
-    public class AddStudentForm
+    public class UpdateCourseForm
     {
         [Required]
         public string Name { get; set; }
-
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Range(0, 10)]
+        public int Credit { get; set; }
     }
 }

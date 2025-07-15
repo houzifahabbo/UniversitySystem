@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
 using University.Core.DTOs;
+using University.Core.Exceptions;
 using University.Core.Forms;
+using University.Core.Validations;
 using University.Data.Entities;
 using University.Data.Repositories;
 
@@ -13,48 +11,59 @@ namespace University.Core.Services
     public class StudentService : IStudentService
     {
         private readonly IStudentRepository _studentRepository;
-        public StudentService(IStudentRepository studentRepository)
+        private readonly ILogger<StudentService> _logger;
+        public StudentService(IStudentRepository studentRepository, ILogger<StudentService> logger)
         {
             _studentRepository = studentRepository;
+            _logger = logger;
         }
         public void Create(AddStudentForm form)
         {
             if (form == null) throw new ArgumentNullException(nameof(form));
-            if (string.IsNullOrEmpty(form.Name)) throw new Exception("Name is required");
-            if (string.IsNullOrEmpty(form.Email)) throw new Exception("Email is required");
-            
-            var student = new Student(){
-                Name=form.Name, 
-                Email=form.Email
+
+            var validation = FormValidator.Validate(form);
+            if (!validation.IsValid)
+                throw new BusinessException(validation.Errors);
+
+            var student = new Student()
+            {
+                Name = form.Name,
+                Email = form.Email
             };
 
             _studentRepository.Add(student);
             _studentRepository.SaveChanges();
+            _logger.LogInformation("Student Created");
+
         }
 
         public void Delete(int id)
         {
             var studet = _studentRepository.GetById(id);
-            if (studet == null) throw new Exception("Student not found");
+            if (studet == null) throw new NotFoundException("Student not found");
             _studentRepository.Delete(studet);
             _studentRepository.SaveChanges();
+            _logger.LogInformation($"Student with id {id} Deleted");
         }
 
         public List<StudentDTO> GetAll()
         {
             var students = _studentRepository.GetAll();
-            return students.Select(s=>new StudentDTO()
+            _logger.LogInformation("Queried All Students");
+
+            return students.Select(s => new StudentDTO()
             {
                 Id = s.Id,
                 Name = s.Name,
-                Email=s.Email,
+                Email = s.Email,
             }).ToList();
         }
 
         public StudentDTO GetById(int id)
         {
             var student = _studentRepository.GetById(id);
-            if (student == null) throw new Exception("Student not found");
+            _logger.LogInformation($"Queried Course with id {id}");
+            if (student == null) throw new NotFoundException("Student not found");
             return new StudentDTO()
             {
                 Id = student.Id,
@@ -67,15 +76,20 @@ namespace University.Core.Services
         {
             if (form == null) throw new ArgumentNullException(nameof(form));
             if (id < 0) throw new ArgumentNullException(nameof(id));
-            if (string.IsNullOrEmpty(form.Name)) throw new Exception("Name is required");
+
+            var validation = FormValidator.Validate(form);
+            if (!validation.IsValid)
+                throw new BusinessException(validation.Errors);
 
             var student = _studentRepository.GetById(id);
-            if (student == null) throw new Exception("Student not found");
+            if (student == null) throw new NotFoundException("Student not found");
 
             student.Name = form.Name;
 
             _studentRepository.Update(student);
             _studentRepository.SaveChanges();
+            _logger.LogInformation($"Updated Student with id {id}");
+
         }
     }
 
