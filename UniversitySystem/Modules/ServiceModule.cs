@@ -14,6 +14,15 @@ namespace University.API.Modules
             builder.RegisterType<CourseService>()
                 .As<ICourseService>()
                 .InstancePerLifetimeScope();
+
+            builder.RegisterType<AuthService>()
+                .As<IAuthService>()
+                .InstancePerLifetimeScope();
+
+            builder.RegisterType<ProfileService>()
+                .As<IProfileService>()
+                .InstancePerLifetimeScope();
+
         }
     }
 }
