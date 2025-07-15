@@ -22,10 +22,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(container =>
     container.RegisterModule<ServiceModule>();
 });
 
-
+builder.Host.UseSerilog();
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
