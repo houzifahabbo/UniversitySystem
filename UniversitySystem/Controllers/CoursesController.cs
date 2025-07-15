@@ -1,4 +1,5 @@
 ﻿using AutoWrapper.Wrappers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using University.API.Filters;
@@ -11,6 +12,7 @@ namespace University.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [TypeFilter(typeof(ApiExceptionFilter))]
+    [Authorize(Roles = "Teacher")]
     public class CoursesController : ControllerBase
     {
         private readonly ICourseService _courseService;
