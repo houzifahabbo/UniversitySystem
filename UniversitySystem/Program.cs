@@ -99,12 +99,28 @@ builder.Services.AddAuthentication(options =>
 // Add services to the container.
 builder.Services.AddControllers();
 
+
+// Cors 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000", "https://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+        }
+    );
+});
+
 var app = builder.Build();
 
 if (builder.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseCors("Frontend");
 }
 
 // Configure the HTTP request pipeline.
