@@ -10,10 +10,8 @@ namespace University.Data.Context.Mapping
         {
             builder.ToTable("Student");
 
-            builder.HasKey(s=>s.Id);
+            builder.HasKey(s => s.Id);
             builder.Property(s => s.Id).HasColumnName("StudentId");
-
-            builder.Property(s => s.Name).HasMaxLength(256);
 
             builder.HasIndex(s => s.Email).IsUnique();
 

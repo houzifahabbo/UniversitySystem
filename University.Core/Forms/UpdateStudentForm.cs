@@ -5,7 +5,14 @@ namespace University.Core.Forms
     public class UpdateStudentForm
     {
         [Required]
-        public string Name { get; set; }
+        public string FirstName { get; set; }
+
+        [Required]
+        public string LastName { get; set; }
+
+        [Required]
+        [Phone]
+        public string Phone { get; set; }
 
     }
 }

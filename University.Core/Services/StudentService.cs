@@ -27,7 +27,9 @@ namespace University.Core.Services
 
             var student = new Student()
             {
-                Name = form.Name,
+                FirstName = form.FirstName,
+                LastName = form.LastName,
+                Phone = form.Phone,
                 Email = form.Email
             };
 
@@ -54,8 +56,10 @@ namespace University.Core.Services
             return students.Select(s => new StudentDTO()
             {
                 Id = s.Id,
-                Name = s.Name,
-                Email = s.Email,
+                FirstName = s.FirstName,
+                LastName = s.LastName,
+                Phone = s.Phone,
+                Email = s.Email
             }).ToList();
         }
 
@@ -68,7 +72,9 @@ namespace University.Core.Services
             {
                 Id = student.Id,
                 Email = student.Email,
-                Name = student.Name
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+                Phone = student.Phone
             };
         }
 
@@ -84,7 +90,10 @@ namespace University.Core.Services
             var student = _studentRepository.GetById(id);
             if (student == null) throw new NotFoundException("Student not found");
 
-            student.Name = form.Name;
+            student.FirstName = form.FirstName;
+            student.LastName = form.LastName;
+            student.Phone = form.Phone;
+
 
             _studentRepository.Update(student);
             _studentRepository.SaveChanges();

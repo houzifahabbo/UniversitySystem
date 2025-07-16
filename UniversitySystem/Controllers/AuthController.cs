@@ -1,6 +1,5 @@
 ﻿using AutoWrapper.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 using University.API.Filters;
 using University.API.Helpers;
 using University.Core.Forms;
@@ -31,7 +30,7 @@ namespace University.API.Controllers
         {
             var user = await _authService.Login(form);
             var token = _jwtTokenHelper.GenerateToken(user);
-            return new ApiResponse(token, HttpStatusCode.OK);
+            return new ApiResponse(result: token);
         }
 
         [HttpPost("register")]
