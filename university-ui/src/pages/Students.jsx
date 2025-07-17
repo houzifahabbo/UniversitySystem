@@ -1,13 +1,28 @@
 import { useEffect, useState, useRef } from "react";
 import api from "../services/api";
-import { App, Spin, Table, Card } from "antd";
-import Search from "antd/es/transfer/search";
+import {
+  Spin,
+  Table,
+  Card,
+  message,
+  Button,
+  Flex,
+  Col,
+  Row,
+  Input,
+} from "antd";
+import { useNavigate } from "react-router-dom";
+import StudentCard from "../components/StudentCard";
+
+const { Search } = Input;
 
 function Students() {
   const [loading, setLoading] = useState(false);
   const [students, setStudents] = useState([]);
   const [filteredStudents, setFilteredStudents] = useState([]);
-  const { message } = App.useApp();
+  const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+
   const hasFetched = useRef(false);
 
   useEffect(() => {
@@ -19,15 +34,15 @@ function Students() {
         hasFetched.current = true;
         const response = await api.get("/api/students");
         if (response.status === 200) {
-          message.success("Students data fetched successfully.");
+          messageApi.success("Students data fetched successfully.");
           setStudents(response.data.result);
           setFilteredStudents(response.data.result);
           console.log(response.data);
         } else {
-          message.error("Failed to fetch students data.");
+          messageApi.error("Failed to fetch students data.");
         }
       } catch (error) {
-        message.error("Error fetching students data: " + error.message);
+        messageApi.error("Error fetching students data: " + error.message);
         hasFetched.current = false; // Reset for future calls
       } finally {
         setLoading(false);
@@ -35,8 +50,7 @@ function Students() {
     };
 
     fetchStudents();
-  }, [message]);
-
+  }, [messageApi]);
   const handleSearch = (value) => {
     if (!value) {
       setFilteredStudents(students);
@@ -49,6 +63,30 @@ function Students() {
           student.email.toLowerCase().includes(value.toLowerCase()),
       );
       setFilteredStudents(filtered);
+    }
+  };
+
+  const NavigateTo = (to = "create", id = null) => {
+    if (id && to === "edit") navigate(`/students/${id}/${to}`);
+    else if (id && to === "view") navigate(`/students/${id}`);
+    else if (to === "create") navigate(`/students/${to}`);
+  };
+
+  const handleDelete = async (studentId) => {
+    try {
+      setLoading(true);
+      const response = await api.delete(`/api/students/${studentId}`);
+      if (response.status === 200) {
+        messageApi.success("Student deleted successfully.");
+        setStudents((prev) => prev.filter((s) => s.id !== studentId));
+        setFilteredStudents((prev) => prev.filter((s) => s.id !== studentId));
+      } else {
+        messageApi.error("Failed to delete student.");
+      }
+    } catch (error) {
+      messageApi.error("Error deleting student: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,39 +117,45 @@ function Students() {
       key: "phone",
     },
   ];
+
   return (
-    <Card
-      title="Students"
-      extra={
+    <>
+      {contextHolder}
+      <Flex gap="small">
         <Search
           placeholder="Search students by name or email..."
           onSearch={handleSearch}
           onChange={(e) => handleSearch(e.target.value)}
           allowClear
         />
-      }
-    >
-      <Spin spinning={loading}>
-        <Table
-          dataSource={filteredStudents}
-          columns={columns}
-          rowKey="id"
-          pagination={{ pageSize: 10 }}
-        />
-      </Spin>
-    </Card>
+        <Button type="primary" onClick={() => NavigateTo()}>
+          Add
+        </Button>
+      </Flex>
+      <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
+        {filteredStudents.map((student) => (
+          <Col key={student.id} xs={24} sm={12} md={8} lg={6}>
+            <StudentCard
+              student={student}
+              onViewDetails={() => NavigateTo("view", student.id)}
+              onEdit={() => NavigateTo("edit", student.id)}
+              onDelete={() => handleDelete(student.id)}
+            />
+          </Col>
+        ))}
+      </Row>
+      <Card title="Students">
+        <Spin spinning={loading}>
+          <Table
+            dataSource={filteredStudents}
+            columns={columns}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+          />
+        </Spin>
+      </Card>
+    </>
   );
 }
-export default Students;
-//  <Card title="Students">
 
-//       <Spin spinning={loading}>
-//         <Table
-//           dataSource={filteredStudents}
-//           columns={columns}
-//           rowKey="id"
-//           pagination={{ pageSize: 10 }}
-//         />
-//       </Spin>
-//     </Card>
-//   );
+export default Students;

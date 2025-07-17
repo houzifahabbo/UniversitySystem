@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
   const navigate = useNavigate();
 
   const handleLogin = async (values) => {
@@ -15,10 +16,10 @@ function Login() {
         localStorage.setItem("token", res.data.result);
         navigate("/students");
       } else {
-        message.error("Login failed. Please check your credentials.");
+        messageApi.error("Login failed. Please check your credentials.");
       }
     } catch (error) {
-      message.error("Login failed. Please try again.");
+      messageApi.error("Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -26,6 +27,7 @@ function Login() {
 
   return (
     <div>
+      {contextHolder}
       <Form
         onFinish={handleLogin}
         name="login"
