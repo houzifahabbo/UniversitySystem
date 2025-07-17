@@ -7,6 +7,9 @@ import Students from "./pages/Students";
 import Grades from "./pages/Grades";
 import PrivateRoute from "./components/PrivateRoute";
 import RoleRoute from "./components/RoleRoute";
+import AddStudent from "./pages/AddStudent";
+import EditStudent from "./pages/EditStudent";
+import ViewStudentDetails from "./pages/ViewStudentDetails";
 
 function App() {
   const menuItems = [
@@ -48,6 +51,30 @@ function App() {
               element={
                 <PrivateRoute>
                   <Students />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/students/create"
+              element={
+                <RoleRoute allowedRoles={["Teacher"]}>
+                  <AddStudent />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/students/:id/edit"
+              element={
+                <RoleRoute allowedRoles={["Teacher"]}>
+                  <EditStudent />
+                </RoleRoute>
+              }
+            />
+            <Route
+              path="/students/:id"
+              element={
+                <PrivateRoute>
+                  <ViewStudentDetails />
                 </PrivateRoute>
               }
             />
